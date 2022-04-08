@@ -3,9 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.apolis.myapplication">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".LocalApplication"
@@ -16,6 +15,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
+            android:name=".view.MLKitActivity"
+            android:exported="false"
+            android:label="@string/title_activity_mlkit"
+            android:theme="@style/Theme.MyApplication.NoActionBar" />
+        <activity
             android:name=".view.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
@@ -25,26 +29,24 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-<!--        <receiver android:name=".broadcastReceiver.MyBroadcastReceiver"  android:exported="true">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.BOOT_COMPLETED"/>-->
-<!--                <action android:name="android.intent.action.INPUT_METHOD_CHANGED" />-->
-<!--            </intent-filter>-->
-<!--        </receiver>-->
+        </activity> <!-- <receiver android:name=".broadcastReceiver.MyBroadcastReceiver"  android:exported="true"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.BOOT_COMPLETED"/> -->
+        <!-- <action android:name="android.intent.action.INPUT_METHOD_CHANGED" /> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
             tools:node="merge">
+
             <!-- If you are using androidx.startup to initialize other components -->
             <meta-data
                 android:name="androidx.work.WorkManagerInitializer"
                 android:value="androidx.startup"
                 tools:node="remove" />
         </provider>
-
     </application>
 
 </manifest>

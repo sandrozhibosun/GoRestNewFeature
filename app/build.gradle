@@ -107,5 +107,9 @@ dependencies {
     //hilt with work manager
     implementation 'androidx.hilt:hilt-work:1.0.0'
 
+    //ML kit barcode
+    implementation 'com.google.mlkit:barcode-scanning:17.0.2'
+
+
 
 }

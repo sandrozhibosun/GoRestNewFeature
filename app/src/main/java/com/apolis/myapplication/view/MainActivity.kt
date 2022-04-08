@@ -10,9 +10,9 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,13 +53,20 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                  UserList(userLivedataList = mainViewModel.userListFlow,
-                     { startClick() },
-                     enableWorkManagerButton
+                     floatActionClick = { startClick() },
+                    onNextButtonClick =  {goNextScreen()},
+                     textLivedata = mainViewModel.textInputSorted,
+                     onTextValueChanged = {mainViewModel.onTextInputChanged(it)}
+                     ,workInfoLivedata = enableWorkManagerButton
                  )
                 }
             }
         }
     }
+    private fun goNextScreen(){
+        startActivity(Intent(this,MLKitActivity::class.java))
+    }
+
     /** Normally set foreground Service
      * <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
      *
@@ -146,16 +153,19 @@ class MainActivity : ComponentActivity() {
     //better use context-register receiver cuz good for performance and user experience
     //also several intent are restrict to use context-register receiver, eg. connection-action
 
-
 }
 
 
 @Composable
 fun UserList(userLivedataList: LiveData<List<User>>,
 floatActionClick:()->Unit,
+             onNextButtonClick:()->Unit,
+             onTextValueChanged: (String)->Unit,
+             textLivedata:LiveData<String>,
 workInfoLivedata:LiveData<WorkInfo>) {
     val userList = userLivedataList.observeAsState()
     val workInfo by workInfoLivedata.observeAsState()
+    val textSorted by textLivedata.observeAsState("")
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = floatActionClick,
@@ -168,7 +178,18 @@ workInfoLivedata:LiveData<WorkInfo>) {
         val progress = workInfo?.progress
 
         Column() {
-            Slider(value = progress?.getFloat(ARG_PROGRESS, 0f)?:0f, onValueChange = {})
+            Button(onClick = onNextButtonClick) {
+                Text(text = "go next screen")
+            }
+            var textInput by rememberSaveable{
+                mutableStateOf("")
+            }
+            TextField(value = textInput, onValueChange = {
+                textInput = it
+                onTextValueChanged.invoke(it)
+            })
+            Text(text = textSorted)
+
             LazyColumn(modifier = Modifier.weight(1f)){
                 userList.value?.forEachIndexed { index, user ->
                     item {
